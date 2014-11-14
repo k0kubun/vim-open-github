@@ -1,3 +1,46 @@
+let s:script_path = expand('<sfile>:p')
+
+function! s:calculate_github_url(line1, line2, args)
+  if !has('ruby')
+    echo "Your vim is not compiled as has('ruby'). Try building vim with ruby support."
+    return
+  endif
+
+ruby <<EOS
+  class UrlGenerator
+    def initialize(start_line, end_line, file_name)
+    end
+
+    def generate(usernae = nil, repo = nil)
+      "https://github.com"
+    end
+  end
+
+  start_line = VIM.evaluate('a:line1')
+  end_line   = VIM.evaluate('a:line2')
+  file_name  = VIM.evaluate('bufname("%")')
+  args       = VIM.evaluate('a:args')
+
+  url = UrlGenerator.new(start_line, end_line, file_name).generate(*args)
+  VIM.command("let url = '#{url}'")
+EOS
+
+  return url
+endfunction
+
+function! OpenGithub(line1, line2, ...)
+  let url = s:calculate_github_url(a:line1, a:line2, a:000)
+  return s:open_browser(url)
+endfunction
+
+function! CopyGithub(line1, line2, ...)
+  let url = s:calculate_github_url(a:line1, a:line2, a:000)
+  return s:copy_to_clipboard(url)
+endfunction
+
+command! -nargs=* -range OpenGithub :call OpenGithub(<line1>, <line2>, <f-args>)
+command! -nargs=* -range CopyGithub :call CopyGithub(<line1>, <line2>, <f-args>)
+
 " Thanks to https://github.com/mattn/gist-vim
 function! s:get_browser_command()
   let browser_command = get(g:, 'browser_command', '')
@@ -53,34 +96,3 @@ function! s:copy_to_clipboard(url)
 
   echo "Copied " . a:url . " to clipboard"
 endfunction
-
-function! s:calculate_github_url(line1, line2, args)
-  if !has('ruby')
-    echo "Your vim is not compiled as has('ruby'). Try building vim with ruby support."
-    return
-  endif
-
-ruby << EOS
-start_line = VIM.evaluate('a:line1')
-end_line   = VIM.evaluate('a:line2')
-args       = VIM.evaluate('a:args')
-
-url = 'https://github.com'
-VIM.command("let url = '#{url}'")
-EOS
-
-  return url
-endfunction
-
-function! OpenGithub(line1, line2, ...)
-  let url = s:calculate_github_url(a:line1, a:line2, a:000)
-  return s:open_browser(url)
-endfunction
-
-function! CopyGithub(line1, line2, ...)
-  let url = s:calculate_github_url(a:line1, a:line2, a:000)
-  return s:copy_to_clipboard(url)
-endfunction
-
-command! -nargs=* -range OpenGithub :call OpenGithub(<line1>, <line2>, <f-args>)
-command! -nargs=* -range CopyGithub :call CopyGithub(<line1>, <line2>, <f-args>)

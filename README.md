@@ -1,7 +1,7 @@
 # vim-open-github
 
 Quickly open your current buffer in GitHub.
-This plugin is forked version of [vim-to-github](https://github.com/tonchis/vim-to-github) with a support of flexible remote path, such as GitHub Enterprise.
+This plugin is a forked version of [vim-to-github](https://github.com/tonchis/vim-to-github) with a support of flexible remote path, such as GitHub Enterprise.
 
 ![](http://gifzo.net/sh6p9TbL41.gif)
 

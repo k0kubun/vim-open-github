@@ -5,8 +5,22 @@ class GithubUrl
     @file_name  = file_name
   end
 
-  def generate(usernae = nil, repo = nil)
+  def generate(username = nil, repo = nil)
     "https://github.com"
+  end
+
+  private
+
+  def repository_root
+    `git rev-parse --top-level`
+  end
+
+  def remote_origin
+    `git config remote.origin.url`
+  end
+
+  def current_branch
+    `git rev-parse --abbrev-ref HEAD`
   end
 end
 

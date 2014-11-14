@@ -10,4 +10,4 @@ module VIM
   end
 end
 
-require_relative "../plugin/url_generator"
+require_relative "../plugin/github_url"

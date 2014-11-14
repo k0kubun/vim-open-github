@@ -3,7 +3,7 @@
 desc "Embed ruby code into vim script"
 task :embed do
   vim_src_path  = File.expand_path('../plugin/open-github.vim', __FILE__)
-  ruby_src_path = File.expand_path('../plugin/url_generator.rb', __FILE__)
+  ruby_src_path = File.expand_path('../plugin/github_url.rb', __FILE__)
 
   vim_src  = File.read(vim_src_path)
   ruby_src = File.read(ruby_src_path)

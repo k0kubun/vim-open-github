@@ -1,7 +1,7 @@
 #!/usr/bin/env rake
 
 desc "Embed ruby code into vim script"
-task :export do
+task :embed do
   vim_src_path  = File.expand_path('../plugin/open-github.vim', __FILE__)
   ruby_src_path = File.expand_path('../plugin/url_generator.rb', __FILE__)
 
@@ -12,4 +12,9 @@ task :export do
   File.write(vim_src_path, new_vim_src)
 end
 
-task default: :export
+desc "Run tests"
+task :spec do
+  system("bundle exec rspec")
+end
+
+task default: :spec

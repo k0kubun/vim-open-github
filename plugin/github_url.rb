@@ -44,15 +44,15 @@ class GithubUrl
   end
 
   def remote_origin
-    @remote_origin ||= `git config remote.origin.url`
+    @remote_origin ||= `git config remote.origin.url`.strip
   end
 
   def repository_root
-    `git rev-parse --top-level`
+    `git rev-parse --top-level`.strip
   end
 
   def current_branch
-    `git rev-parse --abbrev-ref HEAD`
+    `git rev-parse --abbrev-ref HEAD`.strip
   end
 end
 

@@ -48,7 +48,7 @@ class GithubUrl
   end
 
   def repository_root
-    `git rev-parse --top-level`.strip
+    `git rev-parse --show-toplevel`.strip
   end
 
   def current_branch

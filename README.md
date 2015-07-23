@@ -3,7 +3,7 @@
 Quickly open your current buffer in GitHub.
 This plugin is a forked version of [vim-to-github](https://github.com/tonchis/vim-to-github) with a support of flexible remote path, such as GitHub Enterprise.
 
-![](http://gifzo.net/sh6p9TbL41.gif)
+![](http://i.gyazo.com/0473edc2f72f1e8bf8b4111023a9993b.gif)
 
 ## Usage
 

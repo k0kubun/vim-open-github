@@ -7,14 +7,15 @@ class GithubUrl
     @file_name  = file_name
   end
 
-  def generate(user = nil, repo = nil)
+  def generate(*args)
     host, path = parse_remote_origin
+    revision   = args.first || current_branch
 
     trimmed_path = path.gsub(/^\//, "").gsub(/\.git$/, "")
-    user = trimmed_path.split("/").first unless user
-    repo = trimmed_path.split("/").last  unless repo
+    user = trimmed_path.split("/").first
+    repo = trimmed_path.split("/").last
 
-    "https://#{host}/#{user}/#{repo}/blob/#{current_branch}/#{file_path}#{line_anchor}"
+    "https://#{host}/#{user}/#{repo}/blob/#{revision}/#{file_path}#{line_anchor}"
   end
 
   private

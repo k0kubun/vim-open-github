@@ -29,7 +29,15 @@ Visual mode is supported.
 :'<,'>CopyGithub
 ```
 
-No need to copy browser's address bar
+No need to copy browser's address bar.
+
+### Specify branch, tag or revision
+
+```
+:OpenGithub v4.2.3
+```
+
+You can specify the revision to open.
 
 ## Installation
 

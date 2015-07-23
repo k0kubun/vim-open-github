@@ -84,5 +84,11 @@ describe GithubUrl do
         it { is_expected.to eq("https://github.com/k0kubun/vim-open-github/blob/development/plugin/open-github.vim#L1") }
       end
     end
+
+    context 'given argument' do
+      subject { github_url.generate('v4.2.3') }
+
+      it { is_expected.to eq("https://github.com/k0kubun/vim-open-github/blob/v4.2.3/plugin/open-github.vim#L1") }
+    end
   end
 end

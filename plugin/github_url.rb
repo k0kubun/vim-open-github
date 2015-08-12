@@ -9,8 +9,8 @@ class GithubUrl
 
   def generate(*args)
     host, path = parse_remote_origin
-    revision   = args.first || current_branch
-    revision   = to_revision(revision) if is_branch?(revision)
+    revision   = args.first || current_head
+    revision   = master_revision if is_branch?(revision)
 
     trimmed_path = path.gsub(/^\//, "").gsub(/\.git$/, "")
     user = trimmed_path.split("/").first
@@ -60,8 +60,8 @@ class GithubUrl
     `git rev-parse --show-toplevel`.strip
   end
 
-  def current_branch
-    `git rev-parse --abbrev-ref HEAD`.strip
+  def master_revision
+    `git rev-parse master`.strip
   end
 
   def is_branch?(revision)

@@ -34,7 +34,14 @@ class GithubUrl
   end
 
   def file_path
-    @file_name.gsub("#{repository_root}/", "")
+    current_dir = `pwd`.strip
+    full_path =
+      if @file_name.include?(current_dir)
+        @file_name
+      else 
+        File.join(current_dir, @file_name)
+      end
+    full_path.gsub(/^#{repository_root}/, "")
   end
 
   def line_anchor

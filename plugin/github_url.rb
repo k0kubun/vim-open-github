@@ -22,7 +22,7 @@ class GithubUrl
   private
 
   def parse_remote_origin
-    if remote_origin =~ /^https:\/\//
+    if remote_origin =~ /^(https|ssh):\/\//
       uri = URI.parse(remote_origin)
       [uri.host, uri.path]
     elsif remote_origin =~ /^[^:\/]+:\/?[^:\/]+\/[^:\/]+$/

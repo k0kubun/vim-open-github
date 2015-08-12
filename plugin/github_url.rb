@@ -60,6 +60,13 @@ class GithubUrl
     `git rev-parse --show-toplevel`.strip
   end
 
+  def current_head
+    ref = `git rev-parse --abbrev-ref HEAD`.strip
+    return ref if ref != 'HEAD'
+
+    `git describe`.strip
+  end
+
   def master_revision
     `git rev-parse master`.strip
   end

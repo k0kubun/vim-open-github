@@ -25,7 +25,7 @@ class GithubUrl
     user = trimmed_path.split("/").first
     repo = trimmed_path.split("/").last
 
-    "https://#{host}/#{user}/#{repo}/blob/#{revision}/#{file_path}#{line_anchor}"
+    File.join("https://#{host}", user, repo, 'blob', revision, "#{file_path}#{line_anchor}")
   end
 
   private

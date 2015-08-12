@@ -10,6 +10,7 @@ class GithubUrl
   def generate(*args)
     host, path = parse_remote_origin
     revision   = args.first || current_branch
+    revision   = to_revision(revision) if is_branch?(revision)
 
     trimmed_path = path.gsub(/^\//, "").gsub(/\.git$/, "")
     user = trimmed_path.split("/").first
@@ -54,6 +55,18 @@ class GithubUrl
 
   def current_branch
     `git rev-parse --abbrev-ref HEAD`.strip
+  end
+
+  def is_branch?(revision)
+    branches.include?(revision)
+  end
+
+  def to_revision(branch)
+    `git rev-parse #{branch}`.strip
+  end
+
+  def branches
+    `git branch`.split("\n").map { |b| b.gsub(/^\*/, '').strip }
   end
 end
 

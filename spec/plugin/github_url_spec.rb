@@ -8,18 +8,20 @@ describe GithubUrl do
 
     let(:start_line) { 1 }
     let(:end_line)   { 1 }
-    let(:repo_root)  { "/Users/k0kubun/src/github.com/k0kubun/vim-open-github" }
-    let(:file_name)  { "/Users/k0kubun/src/github.com/k0kubun/vim-open-github/plugin/open-github.vim" }
-    let(:remote_origin) { "git@github.com:/k0kubun/vim-open-github.git" }
-    let(:current_branch) { "master" }
+    let(:repo_root)  { `pwd`.strip }
+    let(:target_file_path) { "/plugin/open-github.vim" }
+    let(:file_name)  { "#{repo_root}#{target_file_path}" }
+    let(:user) { `git config remote.origin.url`.strip.split('/')[-2] }
+    let(:revision) { `git rev-parse --abbrev-ref @ | xargs git rev-parse`.strip }
+    let(:github_repo_url) { "https://github.com/#{user}/vim-open-github/blob/#{revision}#{target_file_path}" }
+    let(:remote_origin) { "git@github.com:/#{user}/vim-open-github.git" }
 
     before do
       allow(github_url).to receive(:repository_root).and_return(repo_root)
       allow(github_url).to receive(:remote_origin).and_return(remote_origin)
-      allow(github_url).to receive(:current_branch).and_return(current_branch)
     end
 
-    it { is_expected.to eq("https://github.com/k0kubun/vim-open-github/blob/master/plugin/open-github.vim#L1") }
+    it { is_expected.to eq("#{github_repo_url}#L1") }
 
     describe "line anchor" do
       context "when not visual mode or selecting one line" do
@@ -27,7 +29,7 @@ describe GithubUrl do
         let(:end_line) { 2 }
 
         it "returns url highlighted one line" do
-          expect(subject).to eq("https://github.com/k0kubun/vim-open-github/blob/master/plugin/open-github.vim#L2")
+          expect(subject).to eq("#{github_repo_url}#L2")
         end
       end
 
@@ -36,22 +38,22 @@ describe GithubUrl do
         let(:end_line) { 8 }
 
         it "returns url highlighted one line" do
-          expect(subject).to eq("https://github.com/k0kubun/vim-open-github/blob/master/plugin/open-github.vim#L2-L8")
+          expect(subject).to eq("#{github_repo_url}#L2-L8")
         end
       end
     end
 
     describe "url scheme" do
       context "when url starts with https://" do
-        let(:remote_origin) { "https://github.com/k0kubun/vim-open-github.git" }
+        let(:remote_origin) { "https://github.com/#{user}/vim-open-github.git" }
 
-        it { is_expected.to eq("https://github.com/k0kubun/vim-open-github/blob/master/plugin/open-github.vim#L1") }
+        it { is_expected.to eq("#{github_repo_url}#L1") }
       end
 
       context "when url does not contain user" do
-        let(:remote_origin) { "github.com:/k0kubun/vim-open-github.git" }
+        let(:remote_origin) { "github.com:/#{user}/vim-open-github.git" }
 
-        it { is_expected.to eq("https://github.com/k0kubun/vim-open-github/blob/master/plugin/open-github.vim#L1") }
+        it { is_expected.to eq("#{github_repo_url}#L1") }
       end
     end
 
@@ -59,36 +61,31 @@ describe GithubUrl do
       context "when host is GitHub Enterprise" do
         let(:remote_origin) { "ghe.example.co:k0kubun/vim-open-github.git" }
 
-        it { is_expected.to eq("https://ghe.example.co/k0kubun/vim-open-github/blob/master/plugin/open-github.vim#L1") }
+        it { is_expected.to eq("https://ghe.example.co/k0kubun/vim-open-github/blob/#{revision}/plugin/open-github.vim#L1") }
       end
     end
 
     describe "bufname" do
+      let(:file) { "README.md" }
       context "when bufname is relative path" do
-        let(:file_name)  { "README.md" }
+        let(:file_name) { file }
+        let(:target_file_path) { "/#{file}" }
 
-        it { is_expected.to eq("https://github.com/k0kubun/vim-open-github/blob/master/README.md#L1") }
+        it { is_expected.to eq("#{github_repo_url}#L1") }
       end
 
       context "when bufname is absolute path" do
-        let(:file_name)  { "/Users/k0kubun/src/github.com/k0kubun/vim-open-github/README.md" }
+        let(:target_file_path) { "/#{file}" }
 
-        it { is_expected.to eq("https://github.com/k0kubun/vim-open-github/blob/master/README.md#L1") }
-      end
-    end
-
-    describe "branch" do
-      context "when current branch is not master" do
-        let(:current_branch) { "development" }
-
-        it { is_expected.to eq("https://github.com/k0kubun/vim-open-github/blob/development/plugin/open-github.vim#L1") }
+        it { is_expected.to eq("#{github_repo_url}#L1") }
       end
     end
 
     context 'given argument' do
-      subject { github_url.generate('v4.2.3') }
+      subject { github_url.generate(version) }
+      let(:version) { 'v4.2.3' }
 
-      it { is_expected.to eq("https://github.com/k0kubun/vim-open-github/blob/v4.2.3/plugin/open-github.vim#L1") }
+      it { is_expected.to eq("https://github.com/#{user}/vim-open-github/blob/#{version}#{target_file_path}#L1") }
     end
   end
 end

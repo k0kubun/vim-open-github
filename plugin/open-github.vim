@@ -25,13 +25,13 @@ class GithubUrl
     user = trimmed_path.split("/").first
     repo = trimmed_path.split("/").last
 
-    File.join("https://#{host}", user, repo, 'blob', revision, "#{file_path}#{line_anchor}")
+    File.join("#{scheme}://#{host}", user, repo, 'blob', revision, "#{file_path}#{line_anchor}")
   end
 
   private
 
   def parse_remote_origin
-    if remote_origin =~ /^(https|ssh):\/\//
+    if remote_origin =~ /^(http|https|ssh):\/\//
       uri = URI.parse(remote_origin)
       [uri.host, uri.path]
     elsif remote_origin =~ /^[^:\/]+:\/?[^:\/]+\/[^:\/]+$/
@@ -40,6 +40,10 @@ class GithubUrl
     else
       raise "Not supported origin url: #{remote_origin}"
     end
+  end
+
+  def scheme
+    remote_origin.split(':').first == 'http' ? 'http' : 'https'
   end
 
   def file_path

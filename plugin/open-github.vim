@@ -19,7 +19,7 @@ class GithubUrl
   def generate(*args)
     host, path = parse_remote_origin
     revision   = args.first || current_head
-    revision   = master_revision if is_branch?(revision)
+    revision   = to_revision(revision) if is_branch?(revision)
 
     trimmed_path = path.gsub(/^\//, "").gsub(/\.git$/, "")
     user = trimmed_path.split("/").first

@@ -61,7 +61,13 @@ describe GithubUrl do
       context "when host is GitHub Enterprise" do
         let(:remote_origin) { "ghe.example.co:k0kubun/vim-open-github.git" }
 
-        it { is_expected.to eq("https://ghe.example.co/k0kubun/vim-open-github/blob/#{revision}/plugin/open-github.vim#L1") }
+        it { is_expected.to eq("https://ghe.example.co/k0kubun/vim-open-github/blob/#{revision}#{target_file_path}#L1") }
+      end
+
+      context "when host is Github Enterprise" do
+        let(:remote_origin) { "http://ghe.example.com/k0kubun/vim-open-github.vim" }
+
+        it { is_expected.to eq("http://ghe.example.com/k0kubun/vim-open-github.vim/blob/#{revision}#{target_file_path}#L1") }
       end
     end
 

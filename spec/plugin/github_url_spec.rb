@@ -87,11 +87,23 @@ describe GithubUrl do
       end
     end
 
-    context 'given argument' do
+    context 'given arguments' do
       subject { github_url.generate(version) }
       let(:version) { 'v4.2.3' }
 
       it { is_expected.to eq("https://github.com/#{user}/vim-open-github/blob/#{version}#{target_file_path}#L1") }
+
+      context 'when given the -b flag' do
+        subject { github_url.generate('-b', version) }
+
+        it { is_expected.to eq("https://github.com/#{user}/vim-open-github/blame/#{version}#{target_file_path}#L1") }
+      end
+
+      context 'when given the --blame flag' do
+        subject { github_url.generate('--blame', version) }
+
+        it { is_expected.to eq("https://github.com/#{user}/vim-open-github/blame/#{version}#{target_file_path}#L1") }
+      end
     end
   end
 end

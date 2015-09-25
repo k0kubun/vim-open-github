@@ -16,6 +16,13 @@ describe GithubUrl do
     let(:github_repo_url) { "https://github.com/#{user}/vim-open-github/blob/#{revision}#{target_file_path}" }
     let(:remote_origin) { "git@github.com:/#{user}/vim-open-github.git" }
 
+    let(:user) do
+      remote = `git config remote.origin.url`
+      if res = remote.match(/github.com[\/:]([\w\d])/)
+        res[1]
+      end
+    end
+
     before do
       allow(github_url).to receive(:repository_root).and_return(repo_root)
       allow(github_url).to receive(:remote_origin).and_return(remote_origin)

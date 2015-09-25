@@ -17,6 +17,7 @@ class GithubUrl
   end
 
   def generate(*args)
+    status = blame_mode?(args) ? 'blame' : 'blob'
     host, path = parse_remote_origin
     revision   = args.first || current_head
     revision   = to_revision(revision) if is_branch?(revision)
@@ -25,10 +26,14 @@ class GithubUrl
     user = trimmed_path.split("/").first
     repo = trimmed_path.split("/").last
 
-    File.join("#{scheme}://#{host}", user, repo, 'blob', revision, "#{file_path}#{line_anchor}")
+    File.join("#{scheme}://#{host}", user, repo, status, revision, "#{file_path}#{line_anchor}")
   end
 
   private
+
+  def blame_mode?(args)
+    args.delete('-b') || args.delete('--blame')
+  end
 
   def parse_remote_origin
     if remote_origin =~ /^(http|https|ssh):\/\//
@@ -51,7 +56,7 @@ class GithubUrl
     full_path =
       if @file_name.include?(current_dir)
         @file_name
-      else 
+      else
         File.join(current_dir, @file_name)
       end
     full_path.gsub(/^#{repository_root}/, "")

@@ -18,7 +18,7 @@ class GithubUrl
 
   def generate(*args)
     status = blame_mode?(args) ? 'blame' : 'blob'
-    host, path = parse_remote_origin
+    host, path = parse_github_remote
     revision   = args.first || current_head
     revision   = to_revision(revision) if is_branch?(revision)
 
@@ -35,20 +35,20 @@ class GithubUrl
     args.delete('-b') || args.delete('--blame')
   end
 
-  def parse_remote_origin
-    if remote_origin =~ /^(http|https|ssh):\/\//
-      uri = URI.parse(remote_origin)
+  def parse_github_remote
+    if remote_url =~ /^(http|https|ssh):\/\//
+      uri = URI.parse(remote_url)
       [uri.host, uri.path]
-    elsif remote_origin =~ /^[^:\/]+:\/?[^:\/]+\/[^:\/]+$/
-      host, path = remote_origin.split(":")
+    elsif remote_url =~ /^[^:\/]+:\/?[^:\/]+\/[^:\/]+$/
+      host, path = remote_url.split(":")
       [host.split("@").last, path]
     else
-      raise "Not supported origin url: #{remote_origin}"
+      raise "Unsupported remote url: #{remote_url}"
     end
   end
 
   def scheme
-    remote_origin.split(':').first == 'http' ? 'http' : 'https'
+    remote_url.split(':').first == 'http' ? 'http' : 'https'
   end
 
   def file_path
@@ -70,8 +70,18 @@ class GithubUrl
     end
   end
 
-  def remote_origin
-    @remote_origin ||= `git config remote.origin.url`.strip
+  def remote_url
+    @remote_url ||= get_remote_url(find_github_remote)
+  end
+
+  def get_remote_url(remote)
+    `git config remote.#{remote}.url`.strip
+  end
+
+  def find_github_remote
+    ['origin', 'github', *`git remote`.lines.map(&:strip)].find do |remote|
+      get_remote_url(remote).match(/github\.com/)
+    end || 'origin'
   end
 
   def repository_root

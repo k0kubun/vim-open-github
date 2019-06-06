@@ -62,11 +62,17 @@ class GithubUrl
   end
 
   def remote_url
-    @remote_url ||= `git config remote.#{find_github_remote}.url`.strip
+    @remote_url ||= get_remote_url(find_github_remote)
+  end
+
+  def get_remote_url(remote)
+    `git config remote.#{remote}.url`.strip
   end
 
   def find_github_remote
-    'origin'
+    ['origin', 'github', *`git remote`.lines.map(&:strip)].find do |remote|
+      get_remote_url(remote).match(/github\.com/)
+    end || 'origin'
   end
 
   def repository_root
